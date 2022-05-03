@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/omec-project/config5g/logger"
-	protos "github.com/ajaythakurintel/config5g/proto/sdcoreConfig"
+	protos "github.com/omec-project/config5g/proto/sdcoreConfig"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/connectivity"
@@ -150,7 +150,7 @@ func (confClient *ConfigClient) GetConfigClientConn() *grpc.ClientConn {
 }
 
 func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.NetworkSliceResponse) {
-	logger.GrpcLog.Infoln("subscribeToConfigPod ")
+	logger.GrpcLog.Errorln("subscribeToConfigPod called ")
 	myid := os.Getenv("HOSTNAME")
 	var stream protos.ConfigService_NetworkSliceSubscribeClient
 	for {
@@ -158,7 +158,7 @@ func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.Netwo
 			status := confClient.Conn.GetState()
 			var err error
 			if status == connectivity.Ready {
-				logger.GrpcLog.Infoln("connectivity ready ")
+				logger.GrpcLog.Errorln("connectivity ready ")
 				rreq := &protos.NetworkSliceRequest{RestartCounter: selfRestartCounter, ClientId: myid, MetadataRequested: confClient.MetadataRequested}
 				if stream, err = confClient.Client.NetworkSliceSubscribe(context.Background(), rreq); err != nil {
 					logger.GrpcLog.Errorf("Failed to subscribe: %v", err)
@@ -167,10 +167,11 @@ func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.Netwo
 					continue
 				}
 			} else {
-				//logger.GrpcLog.Errorf("Connectivity status not ready")
+				logger.GrpcLog.Errorf("Connectivity status not ready")
 				continue
 			}
 		}
+		logger.GrpcLog.Errorln("Failed to receive message: error")
 		rsp, err := stream.Recv()
 		if err != nil {
 			logger.GrpcLog.Errorf("Failed to receive message: %v", err)
