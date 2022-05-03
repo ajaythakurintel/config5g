@@ -155,6 +155,7 @@ func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.Netwo
 	var stream protos.ConfigService_NetworkSliceSubscribeClient
 	for {
 		if stream == nil {
+			logger.GrpcLog.Errorln("check connectivity state")
 			status := confClient.Conn.GetState()
 			var err error
 			if status == connectivity.Ready {
