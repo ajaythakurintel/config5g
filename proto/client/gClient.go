@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/omec-project/config5g/logger"
-	protos "github.com/omec-project/config5g/proto/sdcoreConfig"
+	protos "github.com/ajaythakurintel/config5g/proto/sdcoreConfig"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/connectivity"
