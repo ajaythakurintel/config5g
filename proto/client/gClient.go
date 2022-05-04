@@ -59,7 +59,7 @@ type ConfClient interface {
 
 //This API is added to control metadata from NF Clients
 func ConnectToConfigServer(host string) ConfClient {
-	var confClient ConfClient
+	var confClient ConfigClient
 	for {
 		confClient := CreateChannel(host, 10000)
 		if confClient == nil {
