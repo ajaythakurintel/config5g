@@ -59,24 +59,12 @@ type ConfClient interface {
 
 //This API is added to control metadata from NF Clients
 func ConnectToConfigServer(host string) ConfClient {
-	var confClient ConfClient
-	for {
-		confClient = CreateChannel(host, 10000)
-		if confClient == nil {
-			logger.GrpcLog.Errorln("create grpc channel to config pod failed")
-			return nil
-		}
-
-		logger.GrpcLog.Errorln("Check GRPC channel State")
-		configClient :=  confClient.(*ConfigClient)
-		status := configClient.Conn.GetState()
-		if status == connectivity.Ready {
-			logger.GrpcLog.Errorln("GRPC channel ready")
-			return confClient
-		} else {
-			time.Sleep(time.Second * 2)
-		}
+	confClient := CreateChannel(host, 10000)
+	if confClient == nil {
+		logger.GrpcLog.Errorln("create grpc channel to config pod failed")
+		return nil
 	}
+
 	return confClient
 
 }
@@ -99,6 +87,7 @@ func ConfigWatcher() chan *protos.NetworkSliceResponse {
 		return nil
 	}
 	commChan := make(chan *protos.NetworkSliceResponse)
+	time.Sleep(3)
 	go confClient.subscribeToConfigPod(commChan)
 	time.Sleep(3)
 	return commChan
