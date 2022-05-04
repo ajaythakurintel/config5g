@@ -71,6 +71,7 @@ func (confClient *ConfigClient) PublishOnConfigChange(mdataFlag bool) chan *prot
 	confClient.MetadataRequested = mdataFlag
 	commChan := make(chan *protos.NetworkSliceResponse)
 	go confClient.subscribeToConfigPod(commChan)
+	time.Sleep(3)
 	return commChan
 }
 
@@ -85,6 +86,7 @@ func ConfigWatcher() chan *protos.NetworkSliceResponse {
 	}
 	commChan := make(chan *protos.NetworkSliceResponse)
 	go confClient.subscribeToConfigPod(commChan)
+	time.Sleep(3)
 	return commChan
 }
 
