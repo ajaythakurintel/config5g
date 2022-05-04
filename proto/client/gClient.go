@@ -90,7 +90,6 @@ func ConfigWatcher() chan *protos.NetworkSliceResponse {
 
 func CreateChannel(host string, timeout uint32) ConfClient {
 	logger.GrpcLog.Infoln("create config client")
-	// Second, check to see if we can reuse the gRPC connection for a new P4RT client
 	conn, err := newClientConnection(host)
 	if err != nil {
 		logger.GrpcLog.Errorf("grpc connection failed %v", err)
@@ -157,8 +156,8 @@ func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.Netwo
 		if stream == nil {
 			logger.GrpcLog.Errorln("check connectivity state")
 			status := confClient.Conn.GetState()
-			var err error
 			if status == connectivity.Ready {
+				var err error
 				logger.GrpcLog.Errorln("connectivity ready ")
 				rreq := &protos.NetworkSliceRequest{RestartCounter: selfRestartCounter, ClientId: myid, MetadataRequested: confClient.MetadataRequested}
 				if stream, err = confClient.Client.NetworkSliceSubscribe(context.Background(), rreq); err != nil {
@@ -169,6 +168,7 @@ func (confClient *ConfigClient) subscribeToConfigPod(commChan chan *protos.Netwo
 				}
 			} else {
 				logger.GrpcLog.Errorf("Connectivity status not ready")
+				time.Sleep(time.Second * 1)
 				continue
 			}
 		}
